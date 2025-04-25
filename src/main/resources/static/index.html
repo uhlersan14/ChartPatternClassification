@@ -1,40 +1,119 @@
 <!DOCTYPE html>
 <html>
-
 <head>
-    <title>Image Classification</title>
+    <title>Crypto Chart Pattern Classification</title>
     <meta charset="utf-8" />
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
         integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <script src="script.js" async></script>
+    <style>
+        body {
+            padding: 20px;
+            background: linear-gradient(to bottom, #4e96d9 0%, #ffffff 100%);
+         }
+            /* Hellblau als Hintergrundfarbe */
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .chart-img {
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-top: 15px;
+        }
+        .result-container {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 5px;
+            background-color: #f8f9fa;
+        }
+        .pattern-item {
+            margin-bottom: 5px;
+        }
+        .progress {
+            height: 20px;
+            margin-bottom: 15px;
+        }
+        /* Breite der Upload-Karte an Titel und About anpassen */
+        .upload-card {
+            width: 100%;
+            max-width: 800px; /* Gleiche Breite wie Container */
+            margin: 0 auto;
+        }
+    </style>
 </head>
-
 <body>
-
-    <div class="container-fluid">
-        <h1>Footwear Classification</h1>
-        <p>DeepJavaLibrary (DJL) Demonstration by mosa</p>
-
-        <form>
-            <div class="form-group">
-                <label for="exampleFormControlFile1">Bitte Bild hochladen (jpeg, png)</label>
-                <input type="file" accept="image/png, image/jpeg" class="form-control-file" id="image" name="image"
-                    onchange="checkFiles(this.files);">
+    <div class="container">
+        <div class="row mb-4">
+            <div class="col-12 text-center">
+                <h1>Crypto Chart Pattern Classification</h1>
+                <p class="lead">Upload cryptocurrency chart images to identify technical analysis patterns</p>
+                <hr>
             </div>
-        </form>
+        </div>
 
-        <div id="answerPart" style="visibility: hidden;">
-            <p><b>Answer:</b>
-            <div id="answer"></div>
-            </p>
+        <div class="row">
+            <div class="col-12">
+                <div class="card upload-card">
+                    <div class="card-header">
+                        <h5>Upload Chart Image</h5>
+                    </div>
+                    <div class="card-body">
+                        <form>
+                            <div class="form-group">
+                                <label for="image">Select chart image (JPEG, PNG)</label>
+                                <input type="file" accept="image/png, image/jpeg" class="form-control-file" id="image" name="image"
+                                    onchange="checkFiles(this.files);">
+                            </div>
+                            <div class="form-group">
+                                <small class="text-muted">Supported patterns: Symmetrical Triangle, Rising Wedge, Falling Wedge, 
+                                Double Top, Double Bottom, Descending Triangle, Ascending Triangle</small>
+                            </div>
+                        </form>
+                        <div id="previewContainer" class="mt-3" style="display: none;">
+                            <h6>Uploaded Chart:</h6>
+                            <img id="preview" class="img-fluid chart-img" src="#" alt="Chart preview" />
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-            <p id="previewPart"><b>Analyzed Image:</b>
-            <p><img id="preview" width="300" src="#" alt="preview" /></p>
-            </p>
+            <div class="col-12 mt-4">
+                <div id="resultContainer" class="card" style="display: none;">
+                    <div class="card-header">
+                        <h5>Classification Results</h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="loadingIndicator" style="display: none;">
+                            <div class="d-flex justify-content-center">
+                                <div class="spinner-border" role="status">
+                                    <span class="sr-only">Loading...</span>
+                                </div>
+                            </div>
+                            <p class="text-center mt-2">Analyzing chart pattern...</p>
+                        </div>
+                        <div id="results">
+                            <!-- Results will be populated here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>About This Project</h5>
+                    </div>
+                    <div class="card-body">
+                        <p>This application uses deep learning to identify technical analysis patterns in cryptocurrency charts. 
+                           Upload a chart image, and the application will classify it into one of the supported patterns.</p>
+                        <p>The model is built with DeepJavaLibrary (DJL) and uses a ResNet50 architecture trained on chart pattern examples.</p>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-
-
 </body>
-
 </html>
