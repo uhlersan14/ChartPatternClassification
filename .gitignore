@@ -36,3 +36,8 @@ build/
 /models
 /ut-zap50k-images-square
 /ut-zap50k-images-square-small
+
+/.DS_Store
+/.idea/
+/models/
+/chart-patterns/
