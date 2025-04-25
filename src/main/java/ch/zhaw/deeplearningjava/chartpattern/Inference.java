@@ -4,6 +4,7 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
@@ -11,6 +12,7 @@ import java.util.List;
 
 import javax.imageio.ImageIO;
 
+import ai.djl.Device;
 import ai.djl.Model;
 import ai.djl.ModelException;
 import ai.djl.inference.Predictor;
@@ -30,34 +32,41 @@ public class Inference {
             "SymmetricalTriangle", "RisingWedge", "FallingWedge", 
             "DoubleTop", "DoubleBottom", "DescendingTriangle", "AscendingTriangle");
 
-            public Inference() {
-                try {
-                    // Use MXNet engine instead of PyTorch
-                    Model model = Model.newInstance(Models.MODEL_NAME);  // Remove the engine parameter
-                    Path modelDir = Paths.get("models");
-                    
-                    System.out.println("Looking for model in directory: " + modelDir.toAbsolutePath());
-                    
-                    // Load the model - MXNet doesn't need the file extension in the load method
-                    model.load(modelDir, Models.MODEL_NAME);
-                    System.out.println("Model loaded successfully");
+    public Inference() {
+        try {
+            // Use PyTorch engine
+            Model model = Model.newInstance(Models.MODEL_NAME, Device.cpu(), "pytorch");
+            Path modelDir = Paths.get("models");
+            Path modelPath = modelDir.resolve(Models.MODEL_NAME + ".pt");
             
-                    // Create the translator
-                    Translator<Image, Classifications> translator = ImageClassificationTranslator.builder()
-                            .addTransform(new Resize(Models.IMAGE_WIDTH, Models.IMAGE_HEIGHT))
-                            .addTransform(new ToTensor())
-                            .optApplySoftmax(true)
-                            .optSynset(DEFAULT_CLASSES)
-                            .build();
-                    
-                    predictor = model.newPredictor(translator);
-                    System.out.println("Predictor initialized successfully!");
-            
-                } catch (Exception e) {
-                    System.err.println("Error initializing model: " + e.getMessage());
-                    e.printStackTrace();
-                }
+            // Check if model exists
+            if (Files.exists(modelPath)) {
+                // Load existing trained model
+                System.out.println("Loading model from: " + modelPath);
+                model.load(modelDir, Models.MODEL_NAME);
+            } else {
+                // Use a new model with default parameters
+                System.out.println("Model file not found at: " + modelPath);
+                System.out.println("Creating a new model. Note: This model won't be accurate without training!");
+                model.setBlock(Models.getModel().getBlock());
             }
+
+            // Create the translator
+            Translator<Image, Classifications> translator = ImageClassificationTranslator.builder()
+                    .addTransform(new Resize(Models.IMAGE_WIDTH, Models.IMAGE_HEIGHT))
+                    .addTransform(new ToTensor())
+                    .optApplySoftmax(true)
+                    .optSynset(DEFAULT_CLASSES)
+                    .build();
+            
+            predictor = model.newPredictor(translator);
+            System.out.println("Model loaded successfully!");
+
+        } catch (Exception e) {
+            System.err.println("Error initializing model: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
 
     public Classifications predict(byte[] image) throws ModelException, TranslateException, IOException {
         // Check if predictor was initialized properly
