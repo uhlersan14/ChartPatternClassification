@@ -30,7 +30,7 @@ public final class Models {
 
     public static Model getModel() {
         // create new instance of an empty model
-        Model model = Model.newInstance(MODEL_NAME);
+        Model model = Model.newInstance(Models.MODEL_NAME);
 
         // Block is a composable unit that forms a neural network; combine them like Lego blocks
         // to form a complex network

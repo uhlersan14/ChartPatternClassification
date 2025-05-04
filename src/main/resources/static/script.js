@@ -65,9 +65,9 @@ function checkFiles(files) {
 
 function displayResults(data) {
     const resultsDiv = document.getElementById('results');
-    
-    // Check if data is in the expected format
-    if (!data || !data.classNames || !data.probabilities) {
+
+    // Prüfen, ob Daten ein Array mit mindestens einem Element sind
+    if (!Array.isArray(data) || data.length === 0) {
         resultsDiv.innerHTML = `
             <div class="alert alert-warning">
                 Received unexpected data format from the server.
@@ -75,35 +75,38 @@ function displayResults(data) {
         `;
         return;
     }
-    
+
     // Find top prediction
     let topPrediction = {
         className: '',
         probability: 0
     };
-    
-    for (let i = 0; i < data.classNames.length; i++) {
-        if (data.probabilities[i] > topPrediction.probability) {
-            topPrediction.className = data.classNames[i];
-            topPrediction.probability = data.probabilities[i];
+
+    data.forEach(item => {
+        if (item.probability > topPrediction.probability) {
+            topPrediction = item;
         }
-    }
-    
-    // Create result HTML
-    let resultHtml = `
-        <div class="mb-3">
-            <h5>Detected Pattern: <span class="badge badge-primary">${topPrediction.className}</span></h5>
-            <p>Confidence: ${(topPrediction.probability * 100).toFixed(2)}%</p>
+    });
+
+    // Ausgabe
+    resultsDiv.innerHTML = `
+        <div class="alert alert-success">
+            Top Prediction: ${topPrediction.className} (${(topPrediction.probability * 100).toFixed(2)}%)
         </div>
-        <h6>All Patterns:</h6>
+        <ul>
+            ${data.map(item => `
+                <li>${item.className}: ${(item.probability * 100).toFixed(2)}%</li>
+            `).join('')}
+        </ul>
     `;
-    
-    // Add progress bars for all patterns
-    for (let i = 0; i < data.classNames.length; i++) {
-        const probability = data.probabilities[i];
-        const percentage = (probability * 100).toFixed(2);
-        const className = data.classNames[i];
-        
+            }
+ 
+       
+  // Add progress bars for all patterns
+    data.forEach(item => {
+        const percentage = (item.probability * 100).toFixed(2);
+        const className = item.className;
+
         resultHtml += `
             <div class="pattern-item">
                 <div class="d-flex justify-content-between">
@@ -112,15 +115,12 @@ function displayResults(data) {
                 </div>
                 <div class="progress">
                     <div class="progress-bar ${className === topPrediction.className ? 'bg-success' : ''}" 
-                         role="progressbar" 
-                         style="width: ${percentage}%" 
-                         aria-valuenow="${percentage}" 
-                         aria-valuemin="0" 
-                         aria-valuemax="100"></div>
+                        role="progressbar" 
+                        style="width: ${percentage}%" 
+                        aria-valuenow="${percentage}" 
+                        aria-valuemin="0" 
+                        aria-valuemax="100"></div>
                 </div>
             </div>
         `;
-    }
-    
-    resultsDiv.innerHTML = resultHtml;
-}
+    });
