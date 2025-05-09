@@ -9,8 +9,8 @@
 		<version>3.4.4</version>
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>ch.zhaw.brunniv1.leafsnap</groupId>
-	<artifactId>leafsnap-classification</artifactId>
+	<groupId>ch.zhaw.uhlersan.chartpatternclassification</groupId>
+	<artifactId>chartpatternclassification</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>leafsnap-classification</name>
 	<description>Demo project for Spring Boot</description>
